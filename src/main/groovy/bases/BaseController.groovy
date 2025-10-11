@@ -1,0 +1,4 @@
+package bases
+
+class BaseController {
+}
