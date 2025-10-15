@@ -66,17 +66,16 @@ class RestaurantCategoryController extends BaseController {
     }
 
     @Transactional
-    def delete(String  id, String fbDB){
+    def delete(String  id){
         RestaurantCategory restaurantCategory = RestaurantCategory.get(id)
-        FBDatabase fbDataBase = FBDatabase.get(fbDB)
 
-        if (restaurantCategory == null || fbDataBase == null) {
+        if (restaurantCategory == null) {
             render status: HttpStatus.NOT_FOUND
             return
         }
 
         try {
-            restaurantCategoryService.delete(restaurantCategory, fbDataBase)
+            restaurantCategoryService.delete restaurantCategory
         } catch (Exception ex) {
             ex.printStackTrace()
             respond status: HttpStatus.INTERNAL_SERVER_ERROR

@@ -15,7 +15,8 @@ class Dish extends BaseModel implements Serializable {
 
     static hasMany = [
             langs: LangDish,
-            uids: DishUid
+            uids: DishUid,
+            prices: DishPrice
     ]
 
     static mapping = {
@@ -53,13 +54,10 @@ class Dish extends BaseModel implements Serializable {
 
     def toFirebaseForm = { FBDatabase fbDatabase = null  ->
         [
-            image: image,
-            title: getDefaultLangProperty(langs, 'title'),
-            description: getDefaultLangProperty(langs, 'shortDescription'),
-            showOrder: showOrder,
-            isActive: isActive,
-            dishCategory: dishCategory?.toBasicForm(),
-            langs: langs*.toFirebaseForm(fbDatabase)
+            category : dishCategory?.getUidProperty(dishCategory?.uids, fbDatabase),
+            image:image,
+            showOrder:showOrder,
+            isActive:isActive ? 1 : 0
         ]
     }
 
