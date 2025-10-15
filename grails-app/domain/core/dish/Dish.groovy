@@ -60,5 +60,4 @@ class Dish extends BaseModel implements Serializable {
             isActive:isActive ? 1 : 0
         ]
     }
-
 }
