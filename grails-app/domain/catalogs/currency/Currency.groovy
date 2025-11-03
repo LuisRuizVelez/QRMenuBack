@@ -1,12 +1,11 @@
-package catalogs
+package catalogs.currency
 
 import bases.BaseModel
-import catalogs.country.Country
+import firebase.FBDatabase
 
 class Currency extends BaseModel implements Serializable {
     String name
     String symbol
-    Country country
 
     static mapping = {
         id column: 'id_currency', generator: 'uuid'
@@ -15,7 +14,6 @@ class Currency extends BaseModel implements Serializable {
     static constraints = {
         name nullable: false, blank: false, unique: true
         symbol nullable: false, blank: false
-        country nullable: true, blank: true
     }
 
     def toJsonForm = {
@@ -23,7 +21,20 @@ class Currency extends BaseModel implements Serializable {
             id: id,
             name: name,
             symbol: symbol,
-            country: country?.toBasicForm()
+        ]
+    }
+
+    def toBasicForm = {
+        [
+            id: id,
+            name: name
+        ]
+    }
+
+    def toFirebaseForm = {  FBDatabase fbDatabase = null ->
+        [
+            name: name,
+            symbol: symbol
         ]
     }
 }

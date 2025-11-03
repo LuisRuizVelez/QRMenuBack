@@ -7,7 +7,7 @@ import bases.BaseService
 import annotations.LangDomainClass
 import annotations.UidDomainClass
 
-@UidDomainClass( clazz = DrinkCategory, mainAttribute = "drinkCategory" )
+@UidDomainClass( clazz = DrinkCategoryUid, mainAttribute = "drinkCategory" )
 @LangDomainClass( clazz = LangDrinkCategory, mainAttribute = "drinkCategory" )
 class DrinkCategoryService extends BaseService {
 

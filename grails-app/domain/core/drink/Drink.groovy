@@ -41,7 +41,8 @@ class Drink extends BaseModel implements Serializable {
                 isActive: isActive,
                 menu: menu?.toBasicForm(),
                 drinkCategory: drinkCategory?.toBasicForm(),
-                langs: langs*.toJsonForm()
+                langs: langs*.toJsonForm(),
+                prices: prices*.toJsonForm()
         ]
     }
 

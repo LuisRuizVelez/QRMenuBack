@@ -2,6 +2,7 @@ package core.dish
 
 import bases.BaseModel
 import categories.dish.presentation.DishPresentation
+import catalogs.currency.Currency
 
 class DishPrice extends BaseModel implements Serializable {
     Double price

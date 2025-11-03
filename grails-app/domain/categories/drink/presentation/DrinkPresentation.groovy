@@ -33,7 +33,7 @@ class DrinkPresentation extends BaseModel implements Serializable {
         [
                 id  : id,
                 code: code,
-                title: getDefaultLangProperty(langs, 'title'),
+                name: getDefaultLangProperty(langs, 'title'),
         ]
     }
 
