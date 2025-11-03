@@ -45,6 +45,4 @@ class DrinkPrice extends BaseModel implements Serializable {
                 currency:currency?.getUidProperty(presentation?.uids, fbDatabase),
         ]
     }
-
-
 }
