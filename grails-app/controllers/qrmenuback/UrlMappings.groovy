@@ -25,6 +25,16 @@ class UrlMappings {
         // Mapeo de gestión de secciones por usuario
         get    "/api/Section/getSectionsByUser/$username(.$format)?"(controller: "Section", action:"getSectionsByUser")
 
+
+        // Mapeos de dish and drinks
+        get    "/api/menu/getDishes/$id(.$format)?"(controller: "Menu", action:"getDishes")
+        post    "/api/menu/addDish(.$format)?"(controller:"Menu", action:"addDish")
+        delete    "/api/menu/removeDish(.$format)?"(controller:"Menu", action:"removeDish")
+        get    "/api/menu/getDrinks/$id(.$format)?"(controller: "Menu", action:"getDrinks")
+        post    "/api/menu/addDrink(.$format)?"(controller:"Menu", action:"addDrink")
+        delete    "/api/menu/removeDrink(.$format)?"(controller:"Menu", action:"removeDrink")
+
+
         get "/$controller(.$format)?"(action:"index")
         get "/$controller/$id(.$format)?"(action:"show")
         patch "/$controller/$id(.$format)?"(action:"patch")

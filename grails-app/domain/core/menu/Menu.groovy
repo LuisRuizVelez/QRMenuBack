@@ -2,6 +2,8 @@ package core.menu
 
 import bases.BaseModel
 import categories.menu.MenuCategory
+import core.dish.Dish
+import core.drink.Drink
 import core.restaurant.Restaurant
 import firebase.FBDatabase
 
@@ -16,7 +18,9 @@ class Menu extends BaseModel implements Serializable {
 
     static hasMany = [
             langs: LangMenu,
-            uids: MenuUid
+            uids: MenuUid,
+            dishes: Dish,
+            drinks: Drink
     ]
 
     static mapping = {
