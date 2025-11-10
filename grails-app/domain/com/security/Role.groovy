@@ -17,9 +17,16 @@ class Role implements Serializable {
 	private static final long serialVersionUID = 1
 
 	String authority
+	Boolean isToGrouping
+
+	static hasMany = [childRoles: Role]
+	static belongsTo = [parentRole: Role]
+
 
 	static constraints = {
 		authority nullable: false, blank: false, unique: true
+		isToGrouping nullable: false, blank: false
+		parentRole nullable: true, blank: false
 	}
 
 	static mapping = {
@@ -29,7 +36,12 @@ class Role implements Serializable {
 	def toJsonForm =  {
 		[
 			id: id,
-			authority: authority
+			authority: authority,
+			isToGrouping: isToGrouping,
+			parentRole: !parentRole ? null : [
+					id: parentRole?.id,
+					name: parentRole?.authority
+			],
 		]
 	}
 

@@ -26,8 +26,8 @@ class RoleController extends BaseController {
     }
 
 
-    def getOptions(){
-        def result = roleService.getOptions()
+    def getOptions(InputData inputData){
+        def result = roleService.getOptions inputData
 
         render result as JSON
     }
