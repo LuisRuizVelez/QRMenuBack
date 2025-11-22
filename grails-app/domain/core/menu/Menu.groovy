@@ -1,11 +1,12 @@
 package core.menu
 
-import bases.BaseModel
-import categories.menu.MenuCategory
 import core.dish.Dish
+import bases.BaseModel
 import core.drink.Drink
-import core.restaurant.Restaurant
+import com.security.Role
 import firebase.FBDatabase
+import core.restaurant.Restaurant
+import categories.menu.MenuCategory
 
 class Menu extends BaseModel implements Serializable {
     String code
@@ -13,6 +14,7 @@ class Menu extends BaseModel implements Serializable {
     Integer showOrder
     Boolean isActive
     MenuCategory category
+    Role groupingRole
 
     static belongsTo = [restaurant: Restaurant]
 

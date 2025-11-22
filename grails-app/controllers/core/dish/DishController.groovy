@@ -24,8 +24,8 @@ class DishController extends BaseController {
     }
 
 
-    def getOptions(){
-        def result = dishService.getOptions()
+    def getOptions(InputData inputData){
+        def result = dishService.getOptions inputData
 
         render result as JSON
     }

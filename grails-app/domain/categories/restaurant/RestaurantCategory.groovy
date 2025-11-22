@@ -1,10 +1,12 @@
 package categories.restaurant
 
 import bases.BaseModel
+import com.security.Role
 import firebase.FBDatabase
 
 class RestaurantCategory extends BaseModel implements Serializable {
     String code
+    Role groupingRole
 
     static hasMany = [
             langs: LangRestaurantCategory,

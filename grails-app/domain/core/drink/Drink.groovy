@@ -2,6 +2,7 @@ package core.drink
 
 import bases.BaseModel
 import categories.drink.category.DrinkCategory
+import com.security.Role
 import core.menu.Menu
 import firebase.FBDatabase
 
@@ -10,6 +11,7 @@ class Drink extends BaseModel implements Serializable {
     String image
     Integer showOrder
     Boolean isActive
+    Role groupingRole
 
     static belongsTo = [menu: Menu]
 

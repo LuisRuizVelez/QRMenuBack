@@ -96,6 +96,25 @@ class UserController extends BaseController {
         render roles as JSON
     }
 
+
+
+    def getGroupingRole(String username){
+        User user = User.findByUsername(username)
+
+        if (user == null) {
+            render status: HttpStatus.NOT_FOUND
+            return
+        }
+
+        List<Role> roles = UserRole.findAllByUser(user)*.role
+        Role groupingRole = roles.find { it.isToGrouping }
+
+        render groupingRole ? groupingRole as JSON : [:] as JSON
+    }
+
+
+
+
     @Transactional
     def addRole(String  userId, String roleId){
         User user = User.get(userId)

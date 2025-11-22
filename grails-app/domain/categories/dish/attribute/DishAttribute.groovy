@@ -1,6 +1,7 @@
 package categories.dish.attribute
 
 import bases.BaseModel
+import com.security.Role
 import firebase.FBDatabase
 
 
@@ -9,6 +10,7 @@ class DishAttribute extends BaseModel implements Serializable {
     String icon
     String color
     String relatedImage
+    Role groupingRole
 
     static hasMany = [
         langs: LangDishAttribute,

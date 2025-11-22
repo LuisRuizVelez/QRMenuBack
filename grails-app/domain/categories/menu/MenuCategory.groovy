@@ -1,10 +1,12 @@
 package categories.menu
 
 import bases.BaseModel
+import com.security.Role
 import firebase.FBDatabase
 
 class MenuCategory extends BaseModel implements Serializable {
     String code
+    Role groupingRole
 
     static hasMany = [
         langs: LangMenuCategory,

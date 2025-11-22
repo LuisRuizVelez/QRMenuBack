@@ -1,11 +1,13 @@
 package categories.dish.presentation
 
 import bases.BaseModel
+import com.security.Role
 import firebase.FBDatabase
 
 
 class DishPresentation extends BaseModel implements Serializable {
     String code
+    Role groupingRole
 
     static hasMany = [
             langs: LangDishPresentation,

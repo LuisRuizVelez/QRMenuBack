@@ -13,6 +13,7 @@ class UrlMappings {
 
 
         // Mapeo de gestión de roles de usuario
+        get    "/api/User/getGroupingRole/$username(.$format)?"(controller: "User", action:"getGroupingRole")
         get    "/api/User/getRoles/$userId(.$format)?"(controller: "User", action:"getRoles")
         post    "/api/User/addRole/$userId/$roleId(.$format)?"(controller: "User", action:"addRole")
         delete    "/api/User/removeRole/$userId/$roleId(.$format)?"(controller: "User", action:"removeRole")

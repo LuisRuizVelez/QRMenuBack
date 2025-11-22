@@ -24,8 +24,8 @@ class DrinkController extends BaseController {
     }
 
 
-    def getOptions(){
-        def result = drinkService.getOptions()
+    def getOptions(InputData inputData){
+        def result = drinkService.getOptions inputData
 
         render result as JSON
     }

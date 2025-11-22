@@ -1,5 +1,7 @@
 package core.dish
 
+import com.security.Role
+import com.security.UserService
 import grails.gorm.transactions.Transactional
 import org.springframework.validation.BindingResult
 import utils.InputData
@@ -10,13 +12,27 @@ import annotations.UidDomainClass
 @UidDomainClass( clazz = DishUid, mainAttribute = "dish" )
 @LangDomainClass( clazz = LangDish, mainAttribute = "dish" )
 class DishService extends BaseService {
+    UserService userService
 
     def search(InputData inputData, Map params) {
+        List<Dish> result = filterData inputData, params
+        [total: result.totalCount,  data: result*.toJsonForm()]
+    }
+
+    def getOptions(InputData inputData) {
+        List<Dish> result = filterData inputData
+        result*.toBasicForm()
+    }
+
+    def filterData(InputData inputData, Map params=[:]) {
         Dish dish = inputData?.item as Dish
 
-        List<Dish> result = Dish.createCriteria().list(params) {
+        return Dish.createCriteria().list(params) {
+            if (userService.getSessionValue('enabledFilterByRole') == true)
+                eq 'groupingRole', userService.getSessionValue('groupingRole')
+
             if (dish.dishCategory != null)
-               eq 'dishDrinkCategory' , dish.dishCategory
+                eq 'dishDrinkCategory' , dish.dishCategory
 
             if (dish.menu != null)
                 eq 'menu' , dish.menu
@@ -25,16 +41,11 @@ class DishService extends BaseService {
                 eq 'isActive' , dish.isActive
 
         } as List<Dish>
-
-        [total: result.totalCount,  data: result*.toJsonForm()]
-    }
-
-    def getOptions() {
-        Dish.list()*.toBasicForm()
     }
 
     @Transactional
     def save(Dish _dish) {
+        _dish.groupingRole = _dish.groupingRole ?: userService.getSessionValue('groupingRole') as Role
         Dish dish = _dish.save(flush: true, failOnError: true)
 
         if (!dish)

@@ -25,9 +25,8 @@ class MenuController extends BaseController {
     }
 
 
-    def getOptions(){
-        def result = menuService.getOptions()
-
+    def getOptions(InputData inputData){
+        def result = menuService.getOptions inputData
         render result as JSON
     }
 

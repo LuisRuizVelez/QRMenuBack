@@ -23,8 +23,8 @@ class DishAttributeController extends BaseController {
     }
 
 
-    def getOptions(){
-        def result = dishAttributeService.getOptions()
+    def getOptions(InputData inputData){
+        def result = dishAttributeService.getOptions inputData
 
         render result as JSON
     }

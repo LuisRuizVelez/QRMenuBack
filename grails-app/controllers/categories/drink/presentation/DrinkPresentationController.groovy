@@ -1,6 +1,5 @@
 package categories.drink.presentation
 
-
 import grails.converters.JSON
 import org.springframework.http.HttpStatus
 import grails.validation.ValidationException
@@ -24,9 +23,8 @@ class DrinkPresentationController extends BaseController {
     }
 
 
-    def getOptions(){
-        def result = drinkPresentationService.getOptions()
-
+    def getOptions(InputData inputData){
+        def result = drinkPresentationService.getOptions inputData
         render result as JSON
     }
 

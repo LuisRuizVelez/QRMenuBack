@@ -1,5 +1,7 @@
 package core.drink
 
+import com.security.Role
+import com.security.UserService
 import grails.gorm.transactions.Transactional
 
 import utils.InputData
@@ -10,11 +12,25 @@ import annotations.UidDomainClass
 @UidDomainClass( clazz = DrinkUid, mainAttribute = "drink" )
 @LangDomainClass( clazz = LangDrink, mainAttribute = "drink" )
 class DrinkService extends BaseService {
+    UserService userService
 
     def search(InputData inputData, Map params) {
+        List<Drink> result = filterData inputData, params
+        [total: result.totalCount,  data: result*.toJsonForm()]
+    }
+
+    def getOptions(InputData inputData) {
+        List<Drink> result = filterData inputData
+        result*.toBasicForm()
+    }
+
+    def filterData(InputData inputData, Map params= [:]) {
         Drink drink = inputData?.item as Drink
 
-        List<Drink> result = Drink.createCriteria().list(params) {
+        return Drink.createCriteria().list(params) {
+            if (userService.getSessionValue('enabledFilterByRole') == true)
+                eq 'groupingRole', userService.getSessionValue('groupingRole')
+
             if (drink.drinkCategory != null)
                 eq 'dishDrinkCategory' , drink.drinkCategory
 
@@ -25,16 +41,11 @@ class DrinkService extends BaseService {
                 eq 'isActive' , drink.isActive
 
         } as List<Drink>
-
-        [total: result.totalCount,  data: result*.toJsonForm()]
-    }
-
-    def getOptions() {
-        Drink.list()*.toBasicForm()
     }
 
     @Transactional
     def save(Drink _drink) {
+        _drink.groupingRole = _drink.groupingRole ?: userService.getSessionValue('groupingRole') as Role
         Drink drink = _drink.save(flush: true, failOnError: true)
 
         if (!drink)

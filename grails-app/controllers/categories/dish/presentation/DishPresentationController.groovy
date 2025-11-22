@@ -23,8 +23,8 @@ class DishPresentationController extends BaseController {
     }
 
 
-    def getOptions(){
-        def result = dishPresentationService.getOptions()
+    def getOptions(InputData inputData){
+        def result = dishPresentationService.getOptions inputData
 
         render result as JSON
     }

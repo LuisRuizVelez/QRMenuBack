@@ -23,8 +23,8 @@ class DishCategoryController extends BaseController {
     }
 
 
-    def getOptions(){
-        def result = dishCategoryService.getOptions()
+    def getOptions(InputData inputData){
+        def result = dishCategoryService.getOptions inputData
 
         render result as JSON
     }

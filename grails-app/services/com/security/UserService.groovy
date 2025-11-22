@@ -1,11 +1,20 @@
 package com.security
 
 import grails.gorm.transactions.Transactional
+import org.grails.web.servlet.mvc.GrailsWebRequest
+import org.springframework.web.context.request.RequestContextHolder
 
-import bases.BaseService
 import utils.InputData
+import bases.BaseService
 
 class UserService extends BaseService {
+
+    def getSessionValue(String clave) {
+        GrailsWebRequest webRequest = RequestContextHolder.currentRequestAttributes() as GrailsWebRequest
+        def session = webRequest.session
+        return session[clave]
+    }
+
 
     def search(InputData inputData, Map params) {
         User user = inputData?.item as User

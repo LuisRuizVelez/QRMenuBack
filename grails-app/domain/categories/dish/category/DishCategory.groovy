@@ -1,6 +1,7 @@
 package categories.dish.category
 
 import bases.BaseModel
+import com.security.Role
 import firebase.FBDatabase
 
 class DishCategory extends BaseModel implements Serializable {
@@ -8,6 +9,7 @@ class DishCategory extends BaseModel implements Serializable {
     String image
     Integer showOrder
     Boolean status
+    Role groupingRole
 
     static hasMany = [
         langs: LangDishCategory,

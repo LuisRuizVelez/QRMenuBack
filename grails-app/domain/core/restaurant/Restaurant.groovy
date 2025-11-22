@@ -1,16 +1,17 @@
 package core.restaurant
 
-import bases.BaseModel
-import categories.restaurant.RestaurantCategory
 import core.menu.Menu
+import bases.BaseModel
+import com.security.Role
 import firebase.FBDatabase
-
+import categories.restaurant.RestaurantCategory
 
 class Restaurant extends BaseModel implements Serializable {
     String code
     Boolean needReservation = false
     Boolean isActive = true
     RestaurantCategory category
+    Role groupingRole
 
     static hasMany = [
             langs: LangRestaurant,

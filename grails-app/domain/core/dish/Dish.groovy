@@ -1,15 +1,17 @@
 package core.dish
 
-import bases.BaseModel
-import categories.dish.category.DishCategory
 import core.menu.Menu
+import bases.BaseModel
+import com.security.Role
 import firebase.FBDatabase
+import categories.dish.category.DishCategory
 
 class Dish extends BaseModel implements Serializable {
     DishCategory dishCategory
     String image
     Integer showOrder
     Boolean isActive
+    Role groupingRole
 
     static belongsTo = [menu: Menu]
 
