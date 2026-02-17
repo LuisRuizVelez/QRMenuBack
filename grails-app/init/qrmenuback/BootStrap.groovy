@@ -1,11 +1,8 @@
 package qrmenuback
 
-import com.google.auth.oauth2.GoogleCredentials
-import com.google.firebase.FirebaseApp
-import com.google.firebase.FirebaseOptions
 import com.security.*
-import firebase.FBProject
 import firebase.FirebaseConfigService
+import com.google.firebase.FirebaseApp
 import grails.gorm.transactions.Transactional
 import org.springframework.beans.factory.annotation.Autowired
 
