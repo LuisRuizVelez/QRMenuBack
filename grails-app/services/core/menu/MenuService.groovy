@@ -1,9 +1,15 @@
 package core.menu
 
+import categories.menu.MenuMedia
 import com.security.Role
 import com.security.UserService
+import core.dish.DishService
+import core.drink.DrinkService
+import firebase.StorageService
 import grails.gorm.transactions.Transactional
-
+import media.ImageMedia
+import org.springframework.web.multipart.MultipartFile
+import org.springframework.web.multipart.MultipartHttpServletRequest
 import utils.InputData
 import bases.BaseService
 import annotations.LangDomainClass
@@ -13,6 +19,9 @@ import annotations.UidDomainClass
 @LangDomainClass( clazz = LangMenu, mainAttribute = "menu" )
 class MenuService extends BaseService {
     UserService userService
+    StorageService storageService
+    DishService dishService
+    DrinkService drinkService
 
     def search(InputData inputData, Map params) {
         List<Menu> result = filterData inputData, params
@@ -60,6 +69,58 @@ class MenuService extends BaseService {
     def delete(Menu menu) {
         deleteFromFirebase menu
 
+        // Desasociar y eliminar platos
+        menu.dishes?.toList()?.each { dish ->
+            menu.removeFromDishes(dish)
+            dishService.delete(dish)
+        }
+        menu.dishes?.clear() // Limpiar la colección después de eliminar
+
+        // Desasociar y eliminar bebidas
+        menu.drinks?.toList()?.each { drink ->
+            menu.removeFromDrinks(drink)
+            drinkService.delete(drink)
+        }
+        menu.drinks?.clear() // Limpiar la colección después de eliminar
+
+        // Delete associated media
+        //def imagesCopy = new ArrayList<>(menu.images)
+        menu?.images.toList()?.each { media ->
+            storageService.deleteFile(menu, media.media.name)
+            //menu.removeFromImages(media)
+            media.delete(flush: true)
+        }
+        menu.images?.clear() // Limpiar la colección después de eliminar
+
         menu.delete(flush: true)
     }
+
+    @Transactional
+    def addImage(Menu menu, MultipartHttpServletRequest mpr, Boolean isThumb = false) {
+        mpr?.multipartFiles?.each { key, item ->
+            MultipartFile multipartFile = mpr.getFile(key)
+
+            Map imageProperties = storageService.uploadFile menu, multipartFile, isThumb
+
+            if(imageProperties != null){
+                ImageMedia imageMedia = new ImageMedia(imageProperties)
+                imageMedia.save(flush: true, failOnError: true)
+
+                MenuMedia menuMedia = new MenuMedia(menu: menu, media: imageMedia)
+                menuMedia.save(flush: true, failOnError: true)
+            }
+        }
+
+        sendToFirebase menu
+    }
+
+
+    def removeImage(MenuMedia media) {
+
+
+        storageService.deleteFile(menuMedia.media.storagePath)
+
+        sendToFirebase menu
+    }
+
 }

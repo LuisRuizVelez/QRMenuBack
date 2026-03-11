@@ -6,6 +6,8 @@ class UrlMappings {
 
         post    "/api/$controller/search(.$format)?"(action:"search") // Mapeo al método de búsqueda universal
         post    "/api/$controller(.$format)?"(action:"save")
+        post    "/api/$controller/addImage(.$format)?"(action:"addImage")
+        post    "/api/$controller/removeImage(.$format)?"(action:"removeImage")
         put     "/api/$controller/$id(.$format)?"(action:"update")
         delete  "/api/$controller/$id(.$format)?"(action:"delete")
         delete  "/api/$controller/$id/$fbDatabase(.$format)?"(action:"delete")

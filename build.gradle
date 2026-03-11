@@ -81,6 +81,7 @@ dependencies {
     // Firebase
     implementation 'com.google.firebase:firebase-admin:9.5.0'
     implementation 'org.apache.httpcomponents.client5:httpclient5:5.2' // Required for Firebase Admin SDK
+    implementation 'com.google.cloud:google-cloud-storage' // Required for Firebase Storage
 }
 
 bootRun {

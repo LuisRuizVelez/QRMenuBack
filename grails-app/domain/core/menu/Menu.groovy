@@ -1,16 +1,16 @@
 package core.menu
 
 import core.dish.Dish
-import bases.BaseModel
 import core.drink.Drink
-import com.security.Role
-import firebase.FBDatabase
 import core.restaurant.Restaurant
 import categories.menu.MenuCategory
+import categories.menu.MenuMedia
+import bases.BaseModel
+import com.security.Role
+import firebase.FBDatabase
 
 class Menu extends BaseModel implements Serializable {
     String code
-    String image
     Integer showOrder
     Boolean isActive
     MenuCategory category
@@ -22,27 +22,38 @@ class Menu extends BaseModel implements Serializable {
             langs: LangMenu,
             uids: MenuUid,
             dishes: Dish,
-            drinks: Drink
+            drinks: Drink,
+            images: MenuMedia
     ]
 
     static mapping = {
         id column: 'id_menu', generator: 'uuid'
+        images cascade: "all-delete-orphan"
+        dishes cascade: "all-delete-orphan"
+        drinks cascade: "all-delete-orphan"
     }
 
     static constraints = {
-        code nullable: false, blank: false
-        image nullable: true, blank: true
-        showOrder nullable: true, blank: true
-        isActive nullable: false, blank: false
-        restaurant nullable: false, blank: false
-        category nullable: false, blank: false
+        code        nullable: false, blank: false
+        isActive    nullable: false, blank: false
+        restaurant  nullable: false, blank: false
+        category    nullable: false, blank: false
+        showOrder   nullable: true, blank: true
     }
 
-    def toJsonForm = {
+
+    def beforeDelete() {
+        println "Deleting menu with id: ${id}"
+        dishes?.each { dishService.delete it }
+    }
+
+
+
+
+    def toJsonForm = { FBDatabase fbDatabase = null  ->
         [
             id: id,
             code: code,
-            image: image,
             title: getDefaultLangProperty(langs, 'title'),
             showOrder: showOrder,
             isActive: isActive,
@@ -63,11 +74,11 @@ class Menu extends BaseModel implements Serializable {
     def toFirebaseForm = { FBDatabase fbDatabase = null  ->
         [
             code: code,
-            image: image,
             showOrder: showOrder,
             isActive: isActive ? 1 : 0,
             restaurant: restaurant.getUidProperty(restaurant?.uids, fbDatabase),
             category: category?.getUidProperty(category?.uids, fbDatabase),
+            images: images?.collect { it.toFirebaseForm() }
         ]
     }
 }

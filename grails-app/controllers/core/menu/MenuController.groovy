@@ -1,17 +1,18 @@
 package core.menu
 
+import categories.menu.MenuMedia
 import core.dish.Dish
 import core.drink.Drink
 import grails.converters.JSON
 import org.springframework.http.HttpStatus
 import grails.validation.ValidationException
 import grails.gorm.transactions.Transactional
+import org.springframework.web.multipart.MultipartHttpServletRequest
 
 import bases.BaseController
 import utils.InputData
 
 class MenuController extends BaseController {
-
     MenuService menuService
 
     def search(InputData inputData){
@@ -24,12 +25,10 @@ class MenuController extends BaseController {
         }
     }
 
-
     def getOptions(InputData inputData){
         def result = menuService.getOptions inputData
         render result as JSON
     }
-
 
     @Transactional
     def save(InputData inputData) {
@@ -77,7 +76,7 @@ class MenuController extends BaseController {
             menuService.delete menu
         } catch (Exception ex) {
             ex.printStackTrace()
-            respond status: HttpStatus.INTERNAL_SERVER_ERROR
+            render status: HttpStatus.INTERNAL_SERVER_ERROR
             return
         }
 
@@ -101,8 +100,6 @@ class MenuController extends BaseController {
             respond ex, [status: HttpStatus.INTERNAL_SERVER_ERROR]
         }
     }
-
-
 
     def addDish(InputData inputData){
         try {
@@ -129,7 +126,6 @@ class MenuController extends BaseController {
         }
     }
 
-
     def removeDish(InputData inputData){
         try {
             Menu menu = Menu.get(inputData?.item?.menu as String)
@@ -153,7 +149,6 @@ class MenuController extends BaseController {
         }
     }
 
-
     def getDrinks(String id) {
         try {
             Menu menu = Menu.get(id)
@@ -171,7 +166,6 @@ class MenuController extends BaseController {
             respond ex, [status: HttpStatus.INTERNAL_SERVER_ERROR]
         }
     }
-
 
     def addDrink(InputData inputData){
         try {
@@ -198,7 +192,6 @@ class MenuController extends BaseController {
         }
     }
 
-
     def removeDrink(InputData inputData){
         try {
             Menu menu = Menu.get(inputData?.item?.menu as String)
@@ -214,6 +207,73 @@ class MenuController extends BaseController {
 
             render status: HttpStatus.NO_CONTENT
         } catch (ValidationException ex) {
+            ex.printStackTrace()
+            respond ex, [status: HttpStatus.UNPROCESSABLE_ENTITY]
+        } catch (Exception ex) {
+            ex.printStackTrace()
+            respond ex, [status: HttpStatus.UNPROCESSABLE_ENTITY]
+        }
+    }
+
+
+    /**
+     * Agrega una imagen al menú especificado.
+     *
+     * Este método permite agregar una imagen a un menú existente. La imagen se envía como parte de una solicitud
+     * multipart y se procesa utilizando el servicio `menuService`.
+     *
+     * Parámetros esperados:
+     * - `params.id` (String): El ID del menú al que se agregará la imagen.
+     * - `params.isThumb` (Boolean): Indica si la imagen es una miniatura (thumbnail).
+     *
+     * Respuestas HTTP:
+     * - 200 OK: Si la imagen se agregó correctamente.
+     * - 404 Not Found: Si no se encuentra el menú con el ID proporcionado.
+     * - 422 Unprocessable Entity: Si ocurre un error de validación.
+     *
+     * Excepciones manejadas:
+     * - `ValidationException`: Si ocurre un error de validación al agregar la imagen.
+     * - `Exception`: Cualquier otro error inesperado.
+     */
+    def addImage(){
+        try {
+            Menu menu = Menu.get(params?.id as String)
+            Boolean isThumb = params?.isThumb as Boolean
+
+            if (menu == null) {
+                render status: HttpStatus.NOT_FOUND
+                return
+            }
+
+            MultipartHttpServletRequest mpr =  request as MultipartHttpServletRequest
+
+            menuService.addImage menu, mpr, isThumb
+
+            render status: HttpStatus.OK
+        } catch (ValidationException ex) {
+            ex.printStackTrace()
+            respond ex, [status: HttpStatus.UNPROCESSABLE_ENTITY]
+        } catch (Exception ex) {
+            ex.printStackTrace()
+            respond ex, [status: HttpStatus.UNPROCESSABLE_ENTITY]
+        }
+    }
+
+
+    def removeImage(){
+        try {
+            MenuMedia image = MenuMedia.get(params?.mediaId as String)
+
+            if (image == null) {
+                render status: HttpStatus.NOT_FOUND
+                return
+            }
+
+            menuService.removeImage image
+
+
+            render status: HttpStatus.OK
+        }catch (ValidationException ex) {
             ex.printStackTrace()
             respond ex, [status: HttpStatus.UNPROCESSABLE_ENTITY]
         } catch (Exception ex) {
