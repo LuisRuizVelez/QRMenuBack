@@ -1,6 +1,8 @@
 package core.drink
 
-
+import annotations.DomainClass
+import annotations.MediaDomainClass
+import annotations.ServiceClass
 import grails.converters.JSON
 import org.springframework.http.HttpStatus
 import grails.validation.ValidationException
@@ -9,8 +11,10 @@ import grails.gorm.transactions.Transactional
 import bases.BaseController
 import utils.InputData
 
+@DomainClass(clazz = Drink)
+@ServiceClass(clazz = DrinkService)
+@MediaDomainClass(clazz = DrinkMedia, mainAttribute = "drink")
 class DrinkController extends BaseController {
-
     DrinkService drinkService
 
     def search(InputData inputData){

@@ -28,9 +28,6 @@ class Menu extends BaseModel implements Serializable {
 
     static mapping = {
         id column: 'id_menu', generator: 'uuid'
-        images cascade: "all-delete-orphan"
-        dishes cascade: "all-delete-orphan"
-        drinks cascade: "all-delete-orphan"
     }
 
     static constraints = {
@@ -40,15 +37,6 @@ class Menu extends BaseModel implements Serializable {
         category    nullable: false, blank: false
         showOrder   nullable: true, blank: true
     }
-
-
-    def beforeDelete() {
-        println "Deleting menu with id: ${id}"
-        dishes?.each { dishService.delete it }
-    }
-
-
-
 
     def toJsonForm = { FBDatabase fbDatabase = null  ->
         [
@@ -76,7 +64,7 @@ class Menu extends BaseModel implements Serializable {
             code: code,
             showOrder: showOrder,
             isActive: isActive ? 1 : 0,
-            restaurant: restaurant.getUidProperty(restaurant?.uids, fbDatabase),
+            restaurant: restaurant?.getUidProperty(restaurant?.uids, fbDatabase),
             category: category?.getUidProperty(category?.uids, fbDatabase),
             images: images?.collect { it.toFirebaseForm() }
         ]

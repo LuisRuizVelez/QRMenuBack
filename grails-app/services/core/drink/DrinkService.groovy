@@ -2,8 +2,9 @@ package core.drink
 
 import com.security.Role
 import com.security.UserService
+import firebase.StorageService
 import grails.gorm.transactions.Transactional
-
+import media.ImageMediaService
 import utils.InputData
 import bases.BaseService
 import annotations.LangDomainClass
@@ -13,6 +14,9 @@ import annotations.UidDomainClass
 @LangDomainClass( clazz = LangDrink, mainAttribute = "drink" )
 class DrinkService extends BaseService {
     UserService userService
+    DrinkPriceService drinkPriceService
+    StorageService storageService
+    ImageMediaService imageMediaService
 
     def search(InputData inputData, Map params) {
         List<Drink> result = filterData inputData, params
@@ -64,8 +68,24 @@ class DrinkService extends BaseService {
 
     @Transactional
     def delete(Drink drink) {
+        drink.menu?.removeFromDrinks(drink) // Elimina la referencia en Menu
+
+        // delete prices
+        drink?.prices?.each { drinkPriceService.delete(it) }
+
+        // collect image ids before deleting the drink
+        List<String> imagesIds = drink.images?.collect { it?.media?.id }
+
+        // Delete associated media
+        drink?.images?.each { storageService.deleteFile it?.drink, it?.media?.name }
+
+        // remove drink from Firebase
         deleteFromFirebase drink
 
+        // delete drink from database
         drink.delete(flush: true)
+
+        // delete images collected at the beginning
+        imageMediaService.deleteImages imagesIds
     }
 }

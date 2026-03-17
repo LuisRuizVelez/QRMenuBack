@@ -1,11 +1,14 @@
 package core.restaurant
 
-import com.security.Role
-import com.security.UserService
 import grails.gorm.transactions.Transactional
 
 import utils.InputData
 import bases.BaseService
+import com.security.Role
+import core.menu.MenuService
+import firebase.StorageService
+import media.ImageMediaService
+import com.security.UserService
 import annotations.LangDomainClass
 import annotations.UidDomainClass
 
@@ -13,6 +16,9 @@ import annotations.UidDomainClass
 @LangDomainClass( clazz = LangRestaurant, mainAttribute = "restaurant" )
 class RestaurantService extends BaseService {
     UserService userService
+    StorageService storageService
+    ImageMediaService imageMediaService
+    MenuService menuService
 
     def search(InputData inputData, Map params) {
         List<Restaurant> result = filterData inputData, params
@@ -57,8 +63,22 @@ class RestaurantService extends BaseService {
 
     @Transactional
     def delete(Restaurant restaurant) {
+        // Delete associated menues
+        restaurant?.menues?.each { menuService.delete it }
+
+        // Obtener los IDs de las imágenes asociadas al restaurante
+        List<String> imagesIds = restaurant?.images?.collect { it?.media?.id }
+
+        // Delete associated media
+        restaurant?.images?.each { storageService.deleteFile it?.restaurant, it?.media?.name }
+
+        // Eliminar el restaurante de Firebase
         deleteFromFirebase restaurant
 
+        // Eliminar el restaurante de la base de datos
         restaurant.delete(flush: true)
+
+        // Eliminar los registros de media asociados
+        imageMediaService.deleteImages imagesIds
     }
 }

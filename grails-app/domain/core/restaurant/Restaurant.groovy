@@ -16,7 +16,8 @@ class Restaurant extends BaseModel implements Serializable {
     static hasMany = [
             langs: LangRestaurant,
             uids: RestaurantUid,
-            menues: Menu
+            menues: Menu,
+            images: RestaurantMedia
     ]
 
     static mapping = {
@@ -57,7 +58,8 @@ class Restaurant extends BaseModel implements Serializable {
             name: getDefaultLangProperty(langs, "name"),
             needReservation: needReservation ? 1 : 0,
             isActive: isActive ? 1 : 0,
-            category: category?.getUidProperty(category?.uids, fbDatabase) ?: null
+            category: category?.getUidProperty(category?.uids, fbDatabase) ?: null,
+            images: images?.collect { it.toFirebaseForm() }
         ]
     }
 

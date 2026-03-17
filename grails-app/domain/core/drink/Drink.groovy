@@ -18,7 +18,8 @@ class Drink extends BaseModel implements Serializable {
     static hasMany = [
             langs: LangDrink,
             uids: DrinkUid,
-            prices: DrinkPrice
+            prices: DrinkPrice,
+            images: DrinkMedia
     ]
 
     static mapping = {
@@ -60,7 +61,8 @@ class Drink extends BaseModel implements Serializable {
                 category : drinkCategory?.getUidProperty(drinkCategory?.uids, fbDatabase),
                 image:image,
                 showOrder:showOrder,
-                isActive:isActive ? 1 : 0
+                isActive:isActive ? 1 : 0,
+                images: images?.collect { it.toFirebaseForm() }
         ]
     }
 

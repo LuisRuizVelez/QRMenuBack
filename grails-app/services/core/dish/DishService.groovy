@@ -2,7 +2,9 @@ package core.dish
 
 import com.security.Role
 import com.security.UserService
+import firebase.StorageService
 import grails.gorm.transactions.Transactional
+import media.ImageMediaService
 import org.springframework.validation.BindingResult
 import utils.InputData
 import bases.BaseService
@@ -13,6 +15,9 @@ import annotations.UidDomainClass
 @LangDomainClass( clazz = LangDish, mainAttribute = "dish" )
 class DishService extends BaseService {
     UserService userService
+    DishPriceService dishPriceService
+    StorageService storageService
+    ImageMediaService imageMediaService
 
     def search(InputData inputData, Map params) {
         List<Dish> result = filterData inputData, params
@@ -64,8 +69,24 @@ class DishService extends BaseService {
 
     @Transactional
     def delete(Dish dish) {
+        dish.menu?.removeFromDishes(dish) // Elimina la referencia en Menu
+
+        // delete prices
+        dish.prices?.each { dishPriceService.delete(it) }
+
+        // Collect image media IDs before deleting the dish
+        List<String> imagesIds = dish.images?.collect { it?.media?.id }
+
+        // Delete associated media
+        dish?.images?.each { storageService.deleteFile it?.dish, it?.media?.name }
+
+        // Remove the dish from Firebase
         deleteFromFirebase dish
 
+        // Delete the dish from the database
         dish.delete(flush: true)
+
+        // Delete associated media records
+        imageMediaService.deleteImages imagesIds
     }
 }
