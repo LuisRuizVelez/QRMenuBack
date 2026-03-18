@@ -11,4 +11,4 @@ out/
 .settings
 .classpath
 
- src/main/resources/qrmenu.json
+src/main/resources/qrmenu.json
