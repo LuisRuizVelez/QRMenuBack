@@ -20,6 +20,9 @@ class CountryService extends BaseService {
             if (country.code != null)
                 ilike 'code', "%${country.code}%"
 
+            if (country.isActive != null)
+                eq 'isActive', country.isActive
+
         } as List<Country>
 
         [total: result.totalCount,  data: result*.toJsonForm()]

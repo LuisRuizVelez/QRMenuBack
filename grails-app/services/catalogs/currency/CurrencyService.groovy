@@ -16,6 +16,9 @@ class CurrencyService extends BaseService {
             if (currency.name != null)
                 ilike 'name', "%${currency.name}%"
 
+            if (currency.isActive != null)
+                eq 'isActive', currency?.isActive
+
         } as List<Currency>
 
         [total: result.totalCount,  data: result*.toJsonForm()]
