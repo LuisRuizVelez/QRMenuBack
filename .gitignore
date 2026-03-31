@@ -12,3 +12,4 @@ out/
 .classpath
 
 src/main/resources/qrmenu.json
+bin/main/qrmenu.json
