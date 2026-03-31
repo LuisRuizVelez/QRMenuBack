@@ -18,7 +18,8 @@ class Drink extends BaseModel implements Serializable {
     static hasMany = [
             langs: LangDrink,
             uids: DrinkUid,
-            prices: DrinkPrice
+            prices: DrinkPrice,
+            images: DrinkMedia
     ]
 
     static mapping = {
@@ -29,8 +30,8 @@ class Drink extends BaseModel implements Serializable {
         image nullable: true, blank: true
         showOrder nullable: true, blank: true
         isActive nullable: false, blank: true
-        drinkCategory nullable: true, blank: true
-        menu nullable: true, blank: true
+        drinkCategory nullable: false, blank: false
+        menu nullable: false, blank: false
     }
 
     def toJsonForm = {
@@ -60,7 +61,8 @@ class Drink extends BaseModel implements Serializable {
                 category : drinkCategory?.getUidProperty(drinkCategory?.uids, fbDatabase),
                 image:image,
                 showOrder:showOrder,
-                isActive:isActive ? 1 : 0
+                isActive:isActive ? 1 : 0,
+                images: images?.collect { it.toFirebaseForm() }
         ]
     }
 

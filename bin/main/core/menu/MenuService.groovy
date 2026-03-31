@@ -2,10 +2,14 @@ package core.menu
 
 import com.security.Role
 import com.security.UserService
+import core.dish.DishService
+import core.drink.DrinkService
+import firebase.StorageService
 import grails.gorm.transactions.Transactional
-import org.springframework.web.multipart.MultipartHttpServletRequest
+import media.ImageMediaService
 import utils.InputData
 import bases.BaseService
+
 import annotations.LangDomainClass
 import annotations.UidDomainClass
 
@@ -13,6 +17,10 @@ import annotations.UidDomainClass
 @LangDomainClass( clazz = LangMenu, mainAttribute = "menu" )
 class MenuService extends BaseService {
     UserService userService
+    StorageService storageService
+    DishService dishService
+    DrinkService drinkService
+    ImageMediaService imageMediaService
 
     def search(InputData inputData, Map params) {
         List<Menu> result = filterData inputData, params
@@ -49,7 +57,8 @@ class MenuService extends BaseService {
     }
 
     @Transactional
-    def update(Menu menu, MultipartHttpServletRequest mpr) {
+    def update(InputData inputData, Menu menu) {
+        menu.properties = inputData.item
         menu.save(flush: true, failOnError: true)
 
         sendToFirebase menu
@@ -57,8 +66,26 @@ class MenuService extends BaseService {
 
     @Transactional
     def delete(Menu menu) {
+        menu.restaurant?.removeFromMenues(menu) // Elimina la referencia en Restaurant
+
+        // Desasociar y eliminar platos
+        menu?.dishes?.each { dish -> dishService.delete(dish) }
+
+        // Desasociar y eliminar bebidas
+        menu?.drinks?.each { drink -> drinkService.delete(drink) }
+
+        List<String> imagesIds = menu?.images?.collect { media -> media?.media?.id }
+
+        // Delete associated media
+        menu?.images?.each { storageService.deleteFile it?.menu, it?.media?.name }
+
+        // Delete menu from Firebase
         deleteFromFirebase menu
 
+        // Eliminar el menú
         menu.delete(flush: true)
+
+        // Eliminar los registros de media asociados
+        imageMediaService.deleteImages imagesIds
     }
 }

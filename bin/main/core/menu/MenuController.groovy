@@ -1,18 +1,23 @@
 package core.menu
 
-import core.dish.Dish
-import core.drink.Drink
 import grails.converters.JSON
 import org.springframework.http.HttpStatus
 import grails.validation.ValidationException
 import grails.gorm.transactions.Transactional
-import org.springframework.web.multipart.MultipartHttpServletRequest
 
-import bases.BaseController
+import core.dish.Dish
 import utils.InputData
+import core.drink.Drink
+import bases.BaseController
+import categories.menu.MenuMedia
+import annotations.DomainClass
+import annotations.ServiceClass
+import annotations.MediaDomainClass
 
+@DomainClass(clazz = Menu)
+@ServiceClass(clazz = MenuService)
+@MediaDomainClass(clazz = MenuMedia, mainAttribute = "menu")
 class MenuController extends BaseController {
-
     MenuService menuService
 
     def search(InputData inputData){
@@ -25,12 +30,10 @@ class MenuController extends BaseController {
         }
     }
 
-
     def getOptions(InputData inputData){
         def result = menuService.getOptions inputData
         render result as JSON
     }
-
 
     @Transactional
     def save(InputData inputData) {
@@ -51,20 +54,8 @@ class MenuController extends BaseController {
     def update(InputData inputData) {
         try {
             Menu menu = Menu.get(inputData?.item?.id as String)
-            
-            if (menu == null) {
-                render status: HttpStatus.NOT_FOUND
-                return
-            }
-            
-            MultipartHttpServletRequest mpr = (MultipartHttpServletRequest) request
-
-            menu.properties = inputData?.item
-
-            menuService.update menu, mpr
-
+            menuService.update inputData, menu
             menu.refresh()
-
             def output = menu.toJsonForm inputData?.fbDatabase
 
             render output as JSON
@@ -90,7 +81,7 @@ class MenuController extends BaseController {
             menuService.delete menu
         } catch (Exception ex) {
             ex.printStackTrace()
-            respond status: HttpStatus.INTERNAL_SERVER_ERROR
+            render status: HttpStatus.INTERNAL_SERVER_ERROR
             return
         }
 
@@ -114,8 +105,6 @@ class MenuController extends BaseController {
             respond ex, [status: HttpStatus.INTERNAL_SERVER_ERROR]
         }
     }
-
-
 
     def addDish(InputData inputData){
         try {
@@ -142,7 +131,6 @@ class MenuController extends BaseController {
         }
     }
 
-
     def removeDish(InputData inputData){
         try {
             Menu menu = Menu.get(inputData?.item?.menu as String)
@@ -166,7 +154,6 @@ class MenuController extends BaseController {
         }
     }
 
-
     def getDrinks(String id) {
         try {
             Menu menu = Menu.get(id)
@@ -184,7 +171,6 @@ class MenuController extends BaseController {
             respond ex, [status: HttpStatus.INTERNAL_SERVER_ERROR]
         }
     }
-
 
     def addDrink(InputData inputData){
         try {
@@ -210,7 +196,6 @@ class MenuController extends BaseController {
             respond ex, [status: HttpStatus.UNPROCESSABLE_ENTITY]
         }
     }
-
 
     def removeDrink(InputData inputData){
         try {

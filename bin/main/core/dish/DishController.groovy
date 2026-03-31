@@ -1,6 +1,8 @@
 package core.dish
 
-
+import annotations.DomainClass
+import annotations.MediaDomainClass
+import annotations.ServiceClass
 import grails.converters.JSON
 import org.springframework.http.HttpStatus
 import grails.validation.ValidationException
@@ -9,8 +11,10 @@ import grails.gorm.transactions.Transactional
 import bases.BaseController
 import utils.InputData
 
+@DomainClass(clazz = Dish)
+@ServiceClass(clazz = DishService)
+@MediaDomainClass(clazz = DishMedia, mainAttribute = "dish")
 class DishController extends BaseController {
-
     DishService dishService
 
     def search(InputData inputData){

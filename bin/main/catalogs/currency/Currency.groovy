@@ -6,6 +6,7 @@ import firebase.FBDatabase
 class Currency extends BaseModel implements Serializable {
     String name
     String symbol
+    Boolean isActive
 
     static mapping = {
         id column: 'id_currency', generator: 'uuid'
@@ -14,6 +15,7 @@ class Currency extends BaseModel implements Serializable {
     static constraints = {
         name nullable: false, blank: false, unique: true
         symbol nullable: false, blank: false
+        isActive nullable: true, blank: true
     }
 
     def toJsonForm = {
@@ -21,6 +23,7 @@ class Currency extends BaseModel implements Serializable {
             id: id,
             name: name,
             symbol: symbol,
+            isActive: isActive
         ]
     }
 
@@ -34,7 +37,8 @@ class Currency extends BaseModel implements Serializable {
     def toFirebaseForm = {  FBDatabase fbDatabase = null ->
         [
             name: name,
-            symbol: symbol
+            symbol: symbol,
+            isActive: isActive
         ]
     }
 }

@@ -18,7 +18,7 @@ class LangDrink extends BaseModel implements Serializable {
     }
 
     static constraints = {
-        title nullable: true, blank: true
+        title nullable: false, blank: false
         shortDescription nullable: true, blank: true
         longDescription nullable: true, blank: true
     }

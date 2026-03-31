@@ -1,16 +1,20 @@
 package core.restaurant
 
-
 import grails.converters.JSON
 import org.springframework.http.HttpStatus
 import grails.validation.ValidationException
 import grails.gorm.transactions.Transactional
 
-import bases.BaseController
 import utils.InputData
+import bases.BaseController
+import annotations.DomainClass
+import annotations.ServiceClass
+import annotations.MediaDomainClass
 
+@DomainClass(clazz = Restaurant)
+@ServiceClass(clazz = RestaurantService)
+@MediaDomainClass(clazz = RestaurantMedia, mainAttribute = "restaurant")
 class RestaurantController extends BaseController {
-
     RestaurantService restaurantService
 
     def search(InputData inputData){
@@ -23,13 +27,11 @@ class RestaurantController extends BaseController {
         }
     }
 
-
     def getOptions(InputData inputData){
         def result = restaurantService.getOptions inputData
 
         render result as JSON
     }
-
 
     @Transactional
     def save(InputData inputData) {

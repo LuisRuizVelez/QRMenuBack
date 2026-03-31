@@ -6,6 +6,7 @@ import firebase.FBDatabase
 class Country extends BaseModel implements Serializable {
     String code
     String name
+    Boolean isActive
 
     static hasMany = [
         uids: CountryUid
@@ -18,20 +19,23 @@ class Country extends BaseModel implements Serializable {
     static constraints = {
         code nullable: false, blank: false, unique: true
         name nullable: false, blank: false
+        isActive nullable: true, blank: true
     }
 
     def toJsonForm = {
         [
             id: id,
             code: code,
-            name: name
+            name: name,
+            isActive: isActive
         ]
     }
 
     def toFirebaseForm = { FBDatabase fbDatabase = null ->
         [
             code: code,
-            name: name
+            name: name,
+            isActive: isActive
         ]
     }
 

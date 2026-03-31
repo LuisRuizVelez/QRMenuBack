@@ -19,8 +19,4 @@ class BaseModel implements StringValidationsTrait {
     def getClassName = {
         return this.class.simpleName
     }
-
-    def getFbChildPath = { FBDatabase fbDatabase ->
-        return FbChildPath.findByCodeAndDb( this.class.simpleName, fbDatabase )
-    }
 }
