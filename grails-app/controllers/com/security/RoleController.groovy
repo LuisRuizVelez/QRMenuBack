@@ -95,7 +95,7 @@ class RoleController extends BaseController {
             if(!role || !section)
                 throw new Exception("Role or Section not found.")
 
-            SectionRole sectionRole = new SectionRole(role: role, section: section)
+            SectionRole sectionRole = SectionRole.findOrCreateWhere(role: role, section: section)
             sectionRole.save(flush:true, failOnError:true)
 
             role.refresh()
